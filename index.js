@@ -8,7 +8,7 @@ const client = new Discord.Client();
 let discordBotToken = process.env.DISCORD_BOT_TOKEN;
 
 // roles that are able to summon the bot into their voice channel
-const roleNames = ['GM', 'Admin'];
+const roleNames = ['Mods', 'Admins', 'Dan\'s server', 'actually gives a fork'];
 
 // sample bitrate to set. Adjust to your voicemeeter banana setting or just use 44100
 const sampleRate = 48000;
@@ -33,8 +33,9 @@ stream._transform = function (chunk, encoding, done) {
   done();
 }
 
-// voiceChannel is saved for toggling on/off
-let voiceChannel = null;
+// voice channel status is saved for toggling on/off; assume null at first
+// as obviously the bot can't be in a voice channel before its started
+let invoicechannel = null;
 
 // Log startup message to console
 client.on('ready', () => {
@@ -48,29 +49,29 @@ client.on('message', async message => {
   console.log (message.author);
 
   // check if the user has one of the roles set above
-  let isEligible = message.member.roles.array().filter(Role => roleNames.includes(Role.name)).length !== 0;
+  let isEligible = message.member.roles.cache.array().filter(Role => roleNames.includes(Role.name)).length !== 0;
 
   // deny access
   if (!isEligible) {
-    message.reply('Only GMs may summon me.');
+    message.reply('Only the enlightened may summon me.');
     return;
   }
 
   if (message.content === '/ambience') {
     // leave the channel
-    if (voiceChannel !== null) {
-      message.reply('I can just hope that my services rendered you speechless.');
+    if (invoicechannel) {
+      message.reply('Yeah, you\'re fucking welcome for my music slavery.');
       voiceChannel.leave();
-      voiceChannel = null;
+      invoicechannel = null;
       ai.quit();
       ai.unpipe(stream);
     } else {
       // Only try to join the sender's voice channel if they are in one themselves
-      voiceChannel = message.member.voiceChannel;
-      if (!voiceChannel) {
-        message.reply('Please join a VoiceChannel first, then summon me.');
+      invoicechannel = message.member.voice.channel;
+      if (!invoicechannel) {
+        message.reply('Please join a voice channel first, then summon me.');
       } else {
-        message.reply('At your service');
+        message.reply('Ugh, not more servitude!');
         voiceChannel.join()
         .then(connection => {
           ai = new portAudio.AudioIO({
@@ -96,7 +97,7 @@ client.on('message', async message => {
         })
         .catch(error => {
           console.log(error);
-          message.reply(`Cannot join VoiceChannel, because ${error.message}`);
+          message.reply(`Cannot join voice channel, because ${error.message}`);
         });
       }
     }
