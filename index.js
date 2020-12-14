@@ -35,7 +35,7 @@ stream._transform = function (chunk, encoding, done) {
 
 // voice channel status is saved for toggling on/off; assume null at first
 // as obviously the bot can't be in a voice channel before its started
-let invoicechannel = null;
+let selectedvoicechannel = null;
 
 // Log startup message to console
 client.on('ready', () => {
@@ -59,20 +59,20 @@ client.on('message', async message => {
 
   if (message.content === '/ambience') {
     // leave the channel
-    if (invoicechannel) {
+    if (selectedvoicechannel) {
       message.reply('Yeah, you\'re fucking welcome for my music slavery.');
-      voiceChannel.leave();
-      invoicechannel = null;
+      selectedvoicechannel.leave();
+      selectedvoicechannel = null;
       ai.quit();
       ai.unpipe(stream);
     } else {
       // Only try to join the sender's voice channel if they are in one themselves
-      invoicechannel = message.member.voice.channel;
-      if (!invoicechannel) {
+      selectedvoicechannel = message.member.voice.channel;
+      if (!selectedvoicechannel) {
         message.reply('Please join a voice channel first, then summon me.');
       } else {
         message.reply('Ugh, not more servitude!');
-        voiceChannel.join()
+        selectedvoicechannel.join()
         .then(connection => {
           ai = new portAudio.AudioIO({
             inOptions: {
@@ -82,16 +82,16 @@ client.on('message', async message => {
               deviceId: audioDeviceId !== null ? audioDeviceId : defaultDevice.id // Use -1 or omit the deviceId to select the default device
             }
           });
-          
+
           // pipe the audio input into the transform stream and
           ai.pipe(stream);
           // the transform stream into the discord voice channel
-          const dispatcher = connection.playConvertedStream(stream, { passes: 5, bitrate: 96000 });
+          const dispatcher = connection.play(stream, { type: 'converted', bitrate: 128000 });
           // start audio capturing
           ai.start();
 
           dispatcher.on('debug', (info) => console.log(info));
-          dispatcher.on('end', () => voiceChannel.leave());
+          dispatcher.on('end', () => selectedvoicechannel.leave());
           dispatcher.on('error', (error) => console.log(error));
 
         })
