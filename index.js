@@ -10,7 +10,7 @@ let discordBotToken = process.env.DISCORD_BOT_TOKEN;
 // roles that are able to summon the bot into their voice channel
 const roleNames = ['Mods', 'Admins', 'Dan\'s server', 'actually gives a fork'];
 
-// sample bitrate to set. Adjust to your voicemeeter banana setting or just use 44100
+// samplerate to set. Adjust to your voicemeeter banana setting or just use 44100
 const sampleRate = 48000;
 
 // set the audio device ID, run `node listAudioHardware` to find out which to use, 
@@ -86,7 +86,7 @@ client.on('message', async message => {
           // pipe the audio input into the transform stream and
           ai.pipe(stream);
           // the transform stream into the discord voice channel
-          const dispatcher = connection.play(stream, { type: 'converted', bitrate: 128000 });
+          const dispatcher = connection.play(stream, { type: 'converted', bitrate: '128000', highWaterMark: '1' });
           // start audio capturing
           ai.start();
 
