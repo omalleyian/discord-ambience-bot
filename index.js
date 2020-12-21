@@ -8,7 +8,7 @@ const client = new Discord.Client();
 let discordBotToken = process.env.DISCORD_BOT_TOKEN;
 
 // roles that are able to summon the bot into their voice channel
-const roleNames = ['Mods', 'Admins', 'Dan\'s server', 'actually gives a fork'];
+const roleNames = ['Mods', 'Admins', "Dan's server", 'actually gives a fork'];
 
 // samplerate to set. Adjust to your voicemeeter banana setting or just use 44100
 const sampleRate = 48000;
@@ -52,20 +52,26 @@ client.on('message', async message => {
   let isEligible = message.member.roles.cache.array().filter(Role => roleNames.includes(Role.name)).length !== 0;
 
   // deny access
+  //if (!isEligible) {
+    //message.reply('Only the enlightened may summon me.');
+    //return;
+  //}
+
+// Works like a toggle switch:
+  if (message.content === '/ambience') {
+  // if not eligible (have the role), deny access
   if (!isEligible) {
     message.reply('Only the enlightened may summon me.');
     return;
   }
-
-  if (message.content === '/ambience') {
-    // leave the channel
+    // if in a channel, leave the channel
     if (selectedvoicechannel) {
       message.reply('Yeah, you\'re fucking welcome for my music slavery.');
       selectedvoicechannel.leave();
       selectedvoicechannel = null;
       ai.quit();
       ai.unpipe(stream);
-    } else {
+    } else { //if not in a voice channel...
       // Only try to join the sender's voice channel if they are in one themselves
       selectedvoicechannel = message.member.voice.channel;
       if (!selectedvoicechannel) {
@@ -86,7 +92,7 @@ client.on('message', async message => {
           // pipe the audio input into the transform stream and
           ai.pipe(stream);
           // the transform stream into the discord voice channel
-          const dispatcher = connection.play(stream, { type: 'converted', bitrate: '128000', highWaterMark: '1' });
+          const dispatcher = connection.play(stream, { type: 'converted', bitrate: '128000', volume: false, highWaterMark: 12 });
           // start audio capturing
           ai.start();
 
