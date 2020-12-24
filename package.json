@@ -27,7 +27,7 @@
     "discord.js": "^12.5.1",
     "@discordjs/opus": "^0.3.3",
     "dotenv": "^8.1.0",
-    "naudiodon": "^2.1.0",
+    "naudiodon": "2.2.5",
     "sodium": "^3.0.2",
     "bufferutil": "^4.0.2",
     "utf-8-validate": "^5.0.3",
