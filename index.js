@@ -17,21 +17,8 @@ const sampleRate = 48000;
 // or use null for the configured default device
 const audioDeviceId = null;
 
-// get the default device. Set to any device id you can find, just 
-// do a console.log(portAudio.getDevices()) to find out what's your favorite device ID
-let portInfo = portAudio.getHostAPIs();
-let defaultDeviceId = portInfo.HostAPIs[portInfo.defaultHostAPI].defaultOutput;
-let defaultDevice = portAudio.getDevices().filter(device => device.id === defaultDeviceId);
-
 // Create an instance of AudioIO with inOptions, which will return a ReadableStream
 let ai = null;
-
-// create the transform stream
-let stream = new require('stream').Transform()
-stream._transform = function (chunk, encoding, done) {
-  this.push(chunk);
-  done();
-}
 
 // voice channel status is saved for toggling on/off; assume null at first
 // as obviously the bot can't be in a voice channel before its started
@@ -51,12 +38,6 @@ client.on('message', async message => {
   // check if the user has one of the roles set above
   let isEligible = message.member.roles.cache.array().filter(Role => roleNames.includes(Role.name)).length !== 0;
 
-  // deny access
-  //if (!isEligible) {
-    //message.reply('Only the enlightened may summon me.');
-    //return;
-  //}
-
 // Works like a toggle switch:
   if (message.content === '/ambience') {
   // if not eligible (have the role), deny access
@@ -70,7 +51,6 @@ client.on('message', async message => {
       selectedvoicechannel.leave();
       selectedvoicechannel = null;
       ai.quit();
-      ai.unpipe(stream);
     } else { //if not in a voice channel...
       // Only try to join the sender's voice channel if they are in one themselves
       selectedvoicechannel = message.member.voice.channel;
@@ -78,6 +58,20 @@ client.on('message', async message => {
         message.reply('Please join a voice channel first, then summon me.');
       } else {
         message.reply('Ugh, not more servitude!');
+
+	// get the default device. Set to any device id you can find, just 
+	// do a console.log(portAudio.getDevices()) to find out what's your favorite device ID
+	let portInfo = portAudio.getHostAPIs();
+	let defaultDeviceId = portInfo.HostAPIs[portInfo.defaultHostAPI].defaultOutput;
+	let defaultDevice = portAudio.getDevices().filter(device => device.id === defaultDeviceId);
+
+	// create the transform stream
+	let stream = new require('stream').Transform()
+	stream._transform = function (chunk, encoding, done) {
+  	    this.push(chunk);
+  	    done();
+	    }
+
         selectedvoicechannel.join()
         .then(connection => {
           ai = new portAudio.AudioIO({
