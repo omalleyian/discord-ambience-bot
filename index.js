@@ -8,14 +8,14 @@ const client = new Discord.Client();
 let discordBotToken = process.env.DISCORD_BOT_TOKEN;
 
 // roles that are able to summon the bot into their voice channel
-const roleNames = ['Mods', 'Admins', "Dan's server", 'actually gives a fork'];
+const roleNames = ['MusicLord'];
 
 // samplerate to set. Adjust to your voicemeeter banana setting or just use 44100
 const sampleRate = 48000;
 
 // set the audio device ID, run `node listAudioHardware` to find out which to use, 
 // or use null for the configured default device
-const audioDeviceId = null;
+const audioDeviceId = 2;
 
 // Create an instance of AudioIO with inOptions, which will return a ReadableStream
 let ai = null;
@@ -23,7 +23,6 @@ let ai = null;
 // voice channel status is saved for toggling on/off; assume null at first
 // as obviously the bot can't be in a voice channel before its started
 let selectedvoicechannel = null;
-
 // Log startup message to console
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -39,7 +38,7 @@ client.on('message', async message => {
   let isEligible = message.member.roles.cache.array().filter(Role => roleNames.includes(Role.name)).length !== 0;
 
 // Works like a toggle switch:
-  if (message.content === '/ambience') {
+  if (message.content === '>jams') {
   // if not eligible (have the role), deny access
   if (!isEligible) {
     message.reply('Only the enlightened may summon me.');
@@ -47,7 +46,7 @@ client.on('message', async message => {
   }
     // if in a channel, leave the channel
     if (selectedvoicechannel) {
-      message.reply('Yeah, you\'re fucking welcome for my music slavery.');
+      message.reply('Jam on!');
       selectedvoicechannel.leave();
       selectedvoicechannel = null;
       ai.quit();
@@ -57,7 +56,7 @@ client.on('message', async message => {
       if (!selectedvoicechannel) {
         message.reply('Please join a voice channel first, then summon me.');
       } else {
-        message.reply('Ugh, not more servitude!');
+        message.reply('The Jams have been summoned!');
 
 	// get the default device. Set to any device id you can find, just 
 	// do a console.log(portAudio.getDevices()) to find out what's your favorite device ID
@@ -71,7 +70,6 @@ client.on('message', async message => {
   	    this.push(chunk);
   	    done();
 	    }
-
         selectedvoicechannel.join()
         .then(connection => {
           ai = new portAudio.AudioIO({

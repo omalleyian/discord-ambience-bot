@@ -13,7 +13,8 @@ console.log(defaultDevice);
 console.log("");
 console.log("Output devices");
 console.log("=======================================");
-let devices = portAudio.getDevices().filter(device => device.maxOutputChannels !== 0).map(device => {
+// let devices = portAudio.getDevices().filter(device => device.maxOutputChannels !== 0).map(device => {
+let devices = portAudio.getDevices().map(device => {
     return {
         id: device.id, 
         name: device.name, 

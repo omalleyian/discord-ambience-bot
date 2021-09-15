@@ -24,14 +24,13 @@
   },
   "homepage": "https://github.com/newperson1746/discord-ambience-bot#readme",
   "dependencies": {
-    "discord.js": "^12.5.1",
     "@discordjs/opus": "^0.3.3",
-    "dotenv": "^8.1.0",
-    "naudiodon": "2.2.5",
-    "sodium": "^3.0.2",
     "bufferutil": "^4.0.2",
-    "utf-8-validate": "^5.0.3",
+    "discord.js": "^12.5.1",
+    "dotenv": "^8.6.0",
     "erlpack": "^0.1.3",
+    "naudiodon": "2.2.5",
+    "utf-8-validate": "^5.0.3",
     "zlib-sync": "^0.1.7"
   }
 }

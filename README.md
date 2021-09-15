@@ -5,6 +5,10 @@ By registering a bot on the Discord Site, then running this bot locally and invi
 
 ## Configuration
 
+### Local Environment
+
+- Requires `Node >=16.6.0`
+
 ### Setting up Discord
 
 1. Go to the [Discord Developer Portal](https://discordapp.com/developers/applications/) and register a new application.
@@ -14,21 +18,17 @@ By registering a bot on the Discord Site, then running this bot locally and invi
 5. On the `Bot`-Tab: Upload an App Icon and copy the bot token, insert that into the `.env´ file locally
 6. Go to the copied oauth2 URL and invite the bot to the desired server.
 
-### Setting up the local environment
+### Setup Audio Loopback device
 
-This bot has been testet on Windows 10 and it is working. Since we are using low-level system access, we do need to compile several libraries locally. node-gyp will do the heavy lifting for us, but we need to install some prerequisites by hand.
+Naudiodon is only able to caputre output sound, not output devices. So, you will be unable to record audio from a monitor or optical out. Install an virtual audio loopback device in order to allow the bot to record audio from a program like Spotify.
 
-#### Linux
-`sudo apt-get install build-essentials`
+#### Windows 
 
-#### Windows
-1. Open a powershell command line with elevated (= admin) rights.
-2. Run `npm install --global windows-build-tools`
+VB-Audio Software offers [VB-CABLE Virtual Device](https://vb-audio.com/Cable/) that forwards all audio coming in the CABLE input to the CABLE output device.
 
-The installation is taken quite long and you might be getting stuck in either the Windows build tools installer or in the python installer. Unfortunately, this setup is rather fragile and I can only recommend to 
-
-- reboot the server, then do the installation since it is sensible if any outstanding tasks from the installer service are not yet finished
-- remove any manually installed python versions if the installer fails
+1. Install VB-CABLE Virtual Audio Device
+2. Find the CABLE Output device id (see below)
+3. Set your music software of choice to output to CABLE Input
 
 ### Get your Audio Device
 Run `node listAudioHardware` to get the ID of your desired audo device and insert that into the variable `audioDeviceId` in `index.js`. 
@@ -36,9 +36,13 @@ Run `node listAudioHardware` to get the ID of your desired audo device and inser
 ### Permissions
 Change `roleNames` to any Role Name that should be able to use the bot. **Note:** they still must have the `index.js` on their computer and need to run through the requirements above to prepare a work environment for the locally run bot.
 
-## Usage
+### Start Server
+
+`node ./index.js`
+
+## Bot Usage
 
 1. Connect to your Discord server
 2. Go into a voice Channel
-3. `/ambience` summons the bot into your channel, it starts playing audio right away
-4. `/ambience` again will disconnect the bot from the current audio channel
+3. `>jams` summons the bot into your channel, it starts playing audio right away
+4. `>jams` again will disconnect the bot from the current audio channel
